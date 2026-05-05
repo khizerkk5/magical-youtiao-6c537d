@@ -231,8 +231,8 @@
     .hero-kicker::before { content:''; width:26px; height:1px; background:var(--muted); flex-shrink:0; }
     .hero-h1 {
       font-family: 'August', var(--font);
-      font-size:clamp(5rem,22vw,28rem); font-weight:700;
-      line-height:.86; letter-spacing:-.03em; color:var(--text);
+      font-size:clamp(4.5rem,18vw,22rem); font-weight:700;
+      line-height:.88; letter-spacing:-.03em; color:var(--text);
       margin-bottom:1.4rem;
     }
     .hero-fname {
@@ -534,23 +534,27 @@
     }
     @media (max-width:600px) {
       /* ── NAV ── */
-      nav { padding:.9rem 1.2rem; }
-      .nav-brand {
-        font-size:.65rem; letter-spacing:.18em;
+      nav {
+        padding:.9rem 1.2rem;
+        background: rgba(8,8,8,.97) !important;
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
       }
+      .nav-brand { font-size:.65rem; letter-spacing:.18em; }
       .nav-brand::after { content:'Midnight Dreamers'; }
       .nav-right { gap:.8rem; }
 
       /* ── HERO ── */
-      #hero { padding:0 1.2rem 2.2rem; min-height:100svh; }
-      .hero-h1 { font-size:clamp(3.2rem,18vw,5rem); line-height:.88; margin-bottom:1rem; }
+      #hero { padding:5rem 1.2rem 2.2rem; min-height:45vh; }
+      #hero::before { background-position: 20% center; }
+      .hero-h1 { font-size:clamp(3.8rem,20vw,6.5rem); line-height:.9; margin-bottom:.8rem; }
       .hero-fname { font-size:.62rem; margin-bottom:.9rem; }
       .trailer-pill { font-size:.58rem; padding:.35rem .85rem; margin-bottom:1.2rem; }
       .hero-bottom {
         flex-direction:column; align-items:flex-start; gap:1.4rem; margin-top:1.2rem;
       }
       .hero-tagline { font-size:.92rem; max-width:100%; }
-      .hero-cta { width:100%; justify-content:center; padding:1rem 1.5rem; font-size:.8rem; }
+      .hero-cta { padding:.7rem 1.2rem; font-size:.68rem; align-self:center; }
       .trust { margin-top:2.2rem; gap:1rem; }
       .trust-logos { gap:1.2rem; }
       .trust-logo { font-size:.6rem; }
@@ -658,16 +662,6 @@
     </button>
   </div>
 
-  <div class="trust">
-    <span class="trust-lbl">Trusted By</span>
-    <div class="trust-logos">
-      <span class="trust-logo">Public Choice</span>
-      <span class="trust-logo">Spotify</span>
-      <span class="trust-logo">Samsung</span>
-      <span class="trust-logo">Filmsupply</span>
-      <span class="trust-logo">Slacks</span>
-    </div>
-  </div>
 </section>
 
 <!-- ─── SYNOPSIS ─── -->
