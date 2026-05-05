@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Midnight Dreamers — The Khani Project</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,300;1,6..72,400;1,6..72,600&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'August';
+      src: url('August-Bold.ttf') format('truetype');
+      font-weight: bold;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* ─── DESIGN TOKENS ─── */
+    :root {
+      --green:   #068320;
+      --navy:    #0e3279;
+      --maroon:  #3f1616;
+      --yellow:  #fff100;
+      --bg:      #080808;
+      --bg2:     #101010;
+      --bg3:     #161616;
+      --text:    #f0ede8;
+      --muted:   rgba(240,237,232,0.48);
+      --border:  rgba(240,237,232,0.09);
+      --r:       4px;
+      --font:    'Newsreader', Georgia, serif;
+    }
+
+    /* ─── RESET ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── SCROLL REVEAL ─── */
+    .r0  { opacity:0; transform:translateY(28px);   transition:opacity .75s cubic-bezier(.16,1,.3,1), transform .75s cubic-bezier(.16,1,.3,1); }
+    .rl  { opacity:0; transform:translateX(-36px);  transition:opacity .85s cubic-bezier(.16,1,.3,1), transform .85s cubic-bezier(.16,1,.3,1); }
+    .rs  { opacity:0; transform:scale(.96);          transition:opacity .7s ease, transform .7s cubic-bezier(.16,1,.3,1); }
+    .r0.on, .rl.on, .rs.on { opacity:1; transform:none; }
+    .d1 { transition-delay:.10s; }
+    .d2 { transition-delay:.20s; }
+    .d3 { transition-delay:.30s; }
+    .d4 { transition-delay:.42s; }
+    .d5 { transition-delay:.54s; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top:0; left:0; right:0; z-index:200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 2.5rem;
+      background: linear-gradient(to bottom,rgba(8,8,8,.96) 0%,transparent 100%);
+      transition: background .35s, backdrop-filter .35s, border-color .35s;
+      border-bottom: 1px solid transparent;
+    }
+    nav.stuck {
+      background: rgba(8,8,8,.93);
+      backdrop-filter: blur(14px);
+      border-bottom-color: var(--border);
+    }
+    .nav-brand {
+      font-size:.72rem; font-weight:600; letter-spacing:.22em;
+      text-transform:uppercase; color:var(--text); white-space:nowrap;
+      flex-shrink:0;
+    }
+    .nav-mid {
+      display:flex; flex-direction:column; align-items:center; gap:.1rem;
+      flex:1; min-width:0; overflow:hidden; padding:0 1.5rem;
+    }
+    .nav-avail {
+      font-size:.6rem; letter-spacing:.18em; text-transform:uppercase;
+      color:var(--yellow); display:flex; align-items:center; gap:.4rem;
+      white-space:nowrap;
+    }
+    .nav-dot {
+      width:6px; height:6px; border-radius:50%; background:var(--green);
+      animation:blink 2.2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.75)} }
+    .nav-sub {
+      font-size:.58rem; letter-spacing:.12em; color:var(--muted); font-style:italic;
+    }
+    .nav-right {
+      display:flex; align-items:center; gap:1.2rem;
+      flex-shrink:0;
+    }
+    .nav-time {
+      font-size:.65rem; letter-spacing:.08em; color:var(--muted);
+      font-variant-numeric:tabular-nums;
+    }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      font-family:var(--font); font-size:.68rem; letter-spacing:.16em;
+      text-transform:uppercase; padding:.55rem 1.3rem; border-radius:var(--r);
+      cursor:pointer; transition:background .22s,color .22s,border-color .22s,transform .2s,box-shadow .22s;
+      white-space:nowrap;
+    }
+    .btn-g {  /* green filled */
+      background:var(--green); color:var(--bg); border:1px solid var(--green);
+    }
+    .btn-g:hover {
+      background:transparent; color:var(--green);
+      transform:translateY(-2px); box-shadow:0 8px 28px rgba(6,131,32,.28);
+    }
+    .btn-o {  /* outline */
+      background:transparent; color:var(--text); border:1px solid rgba(240,237,232,.28);
+    }
+    .btn-o:hover {
+      border-color:var(--yellow); color:var(--yellow);
+      transform:translateY(-2px); box-shadow:0 8px 28px rgba(255,241,0,.1);
+    }
+    .nav-ham {
+      background:none; border:1px solid var(--border); color:var(--text);
+      cursor:pointer; padding:.38rem .52rem; border-radius:var(--r);
+      font-size:.85rem; line-height:1;
+      transition:border-color .2s,background .2s;
+    }
+    .nav-ham:hover { border-color:var(--muted); background:rgba(255,255,255,.04); }
+
+    /* ─── HERO ─── */
+    #hero {
+      position:relative; min-height:100vh;
+      display:flex; flex-direction:column; justify-content:flex-end;
+      padding:0 2.5rem 3.5rem; overflow:hidden;
+    }
+    #hero::before {
+      content:'';
+      position:absolute; inset:0; z-index:0;
+      background: url('hero.png') center center / cover no-repeat;
+      transform: scaleX(-1);
+    }
+
+    /* animated orb layer — colour-tones the photo */
+    .orbs {
+      position:absolute; inset:0; z-index:0; pointer-events:none;
+      mix-blend-mode: color-dodge;
+    }
+    .orb {
+      position:absolute; border-radius:50%; filter:blur(110px); opacity:.08;
+    }
+    .orb-g {  /* green */
+      width:640px; height:640px;
+      background:radial-gradient(circle,var(--green),transparent 68%);
+      top:-18%; left:-8%;
+      animation:o1 30s ease-in-out infinite;
+    }
+    .orb-n {  /* navy */
+      width:520px; height:520px;
+      background:radial-gradient(circle,var(--navy),transparent 68%);
+      top:25%; right:-6%;
+      animation:o2 24s ease-in-out infinite; opacity:.1;
+    }
+    .orb-m {  /* maroon */
+      width:420px; height:420px;
+      background:radial-gradient(circle,var(--maroon),transparent 68%);
+      bottom:-8%; left:38%;
+      animation:o3 38s ease-in-out infinite; opacity:.11;
+    }
+    .orb-y {  /* yellow accent — very subtle */
+      width:260px; height:260px;
+      background:radial-gradient(circle,var(--yellow),transparent 70%);
+      top:18%; left:52%;
+      animation:o4 44s ease-in-out infinite; opacity:.025;
+    }
+    @keyframes o1 {
+      0%   { transform:translate(0,0) scale(1); }
+      33%  { transform:translate(70px,55px) scale(1.08); }
+      66%  { transform:translate(-35px,90px) scale(.95); }
+      100% { transform:translate(0,0) scale(1); }
+    }
+    @keyframes o2 {
+      0%   { transform:translate(0,0) scale(1); }
+      40%  { transform:translate(-60px,-45px) scale(1.12); }
+      70%  { transform:translate(35px,70px) scale(.92); }
+      100% { transform:translate(0,0) scale(1); }
+    }
+    @keyframes o3 {
+      0%   { transform:translate(0,0) scale(1); }
+      25%  { transform:translate(55px,-35px) scale(1.1); }
+      75%  { transform:translate(-70px,25px) scale(1.05); }
+      100% { transform:translate(0,0) scale(1); }
+    }
+    @keyframes o4 {
+      0%   { transform:translate(0,0) scale(1); }
+      50%  { transform:translate(-90px,50px) scale(1.18); }
+      100% { transform:translate(0,0) scale(1); }
+    }
+
+    /* vignette — heavier left+bottom so text reads over the photo */
+    .hero-vignette {
+      position:absolute; inset:0; z-index:1; pointer-events:none;
+      background:
+        linear-gradient(to right,
+          rgba(8,8,8,.88) 0%,
+          rgba(8,8,8,.55) 38%,
+          rgba(8,8,8,.18) 65%,
+          rgba(8,8,8,.08) 100%
+        ),
+        linear-gradient(to bottom,
+          rgba(8,8,8,.55) 0%,
+          rgba(8,8,8,0)   22%,
+          rgba(8,8,8,0)   50%,
+          rgba(8,8,8,.75) 82%,
+          rgba(8,8,8,1)   100%
+        );
+    }
+
+    .hero-body { position:relative; z-index:2; }
+    .hero-bottom {
+      position:relative; z-index:2;
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:2rem; margin-top:1.6rem;
+    }
+    .hero-kicker {
+      font-size:.62rem; letter-spacing:.28em; text-transform:uppercase;
+      color:var(--muted); margin-bottom:1.1rem;
+      display:flex; align-items:center; gap:.7rem;
+    }
+    .hero-kicker::before { content:''; width:26px; height:1px; background:var(--muted); flex-shrink:0; }
+    .hero-h1 {
+      font-family: 'August', var(--font);
+      font-size:clamp(5rem,22vw,28rem); font-weight:700;
+      line-height:.86; letter-spacing:-.03em; color:var(--text);
+      margin-bottom:1.4rem;
+    }
+    .hero-fname {
+      font-size:.72rem; letter-spacing:.3em; text-transform:uppercase;
+      color:var(--yellow); margin-bottom:1.8rem;
+    }
+    .trailer-pill {
+      display:inline-flex; align-items:center; gap:.5rem;
+      font-size:.65rem; letter-spacing:.18em; text-transform:uppercase;
+      color:var(--muted); border:1px solid rgba(240,237,232,.18);
+      padding:.4rem 1rem; border-radius:999px;
+      margin-bottom:1.6rem;
+    }
+
+    .hero-tagline {
+      font-size:clamp(1rem,1.8vw,1.2rem); font-style:italic; font-weight:300;
+      color:var(--muted); max-width:420px; line-height:1.55;
+    }
+    .hero-tagline strong { color:var(--text); font-style:normal; font-weight:400; }
+
+    /* right-rail info */
+    .hero-rail {
+      position:absolute; top:50%; right:2.5rem; z-index:2;
+      transform:translateY(-50%);
+      display:flex; flex-direction:column; gap:1.4rem; text-align:right;
+    }
+    .rail-item { display:flex; flex-direction:column; gap:.18rem; }
+    .rail-lbl { font-size:.58rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); }
+    .rail-val { font-size:.82rem; color:var(--text); }
+    .rail-val.live { color:var(--green); }
+
+    /* hero CTA — bottom right, sits in .hero-bottom row */
+    .hero-cta {
+      flex-shrink: 0;
+      font-family: var(--font);
+      font-size: 1rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--green);
+      border: 1px solid var(--green);
+      padding: 1.1rem 2.2rem;
+      border-radius: var(--r);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      transition: background .25s, color .25s, transform .22s, box-shadow .25s;
+    }
+    .hero-cta:hover {
+      background: transparent;
+      color: var(--green);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 36px rgba(6,131,32,.35);
+    }
+    .hero-cta-arrow {
+      font-size: 1.1rem;
+      transition: transform .22s;
+    }
+    .hero-cta:hover .hero-cta-arrow { transform: translate(3px,-3px); }
+
+    /* trusted strip */
+    .trust {
+      position:relative; z-index:2;
+      display:flex; align-items:center; gap:2.5rem;
+      margin-top:3.5rem; padding-top:1.4rem;
+      border-top:1px solid var(--border);
+      flex-wrap:wrap;
+    }
+    .trust-lbl {
+      font-size:.58rem; letter-spacing:.22em; text-transform:uppercase;
+      color:var(--muted); white-space:nowrap;
+    }
+    .trust-logos { display:flex; align-items:center; gap:2rem; flex-wrap:wrap; }
+    .trust-logo {
+      font-size:.68rem; letter-spacing:.14em; text-transform:uppercase;
+      color:rgba(240,237,232,.25); font-weight:500;
+      transition:color .25s; cursor:default;
+    }
+    .trust-logo:hover { color:var(--muted); }
+
+    /* ─── SECTION BASE ─── */
+    .section { padding:7rem 2.5rem; }
+    .sec-label {
+      font-size:.6rem; letter-spacing:.24em; text-transform:uppercase;
+      color:var(--muted); margin-bottom:1.2rem;
+      display:flex; align-items:center; gap:.7rem;
+    }
+    .sec-label::before { content:'/'; color:var(--green); }
+
+    /* ─── SYNOPSIS ─── */
+    #synopsis {
+      background:var(--bg);
+      display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:start;
+    }
+    .syn-h2 {
+      font-size:clamp(2.2rem,5vw,4.2rem); font-weight:600;
+      line-height:1.06; letter-spacing:-.022em; margin-bottom:2rem;
+    }
+    .syn-h2 em { font-style:italic; color:var(--yellow); }
+    .syn-body {
+      font-size:1.02rem; font-weight:300; line-height:1.82;
+      color:var(--muted);
+    }
+    .syn-body p+p { margin-top:1.2rem; }
+    .syn-stats {
+      display:grid; grid-template-columns:1fr 1fr; gap:1.8rem;
+      padding:2.2rem; margin-top:2.2rem;
+      background:var(--bg2); border:1px solid var(--border); border-radius:var(--r);
+    }
+    .st-lbl { font-size:.58rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:.35rem; }
+    .st-val { font-size:.96rem; font-weight:500; color:var(--text); }
+    .st-val.accent { color:var(--green); }
+
+    /* ─── FILM DETAILS ─── */
+    #details {
+      background:var(--bg2);
+      border-top:1px solid var(--border);
+      border-bottom:1px solid var(--border);
+    }
+    .det-head {
+      display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:3.5rem;
+      gap:2rem; flex-wrap:wrap;
+    }
+    .det-h2 {
+      font-size:clamp(1.9rem,4vw,3.4rem); font-weight:600;
+      line-height:1.08; letter-spacing:-.02em;
+    }
+    .card-grid {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      gap:1.5px; background:var(--border); border-radius:var(--r); overflow:hidden;
+    }
+    .det-card {
+      background:var(--bg); padding:2.4rem 2rem;
+      position:relative; overflow:hidden;
+      transition:background .28s;
+      cursor:default;
+    }
+    .det-card::after {
+      content:''; position:absolute; bottom:0; left:0; right:0; height:2px;
+      background:var(--green); transform:scaleX(0); transform-origin:left;
+      transition:transform .35s cubic-bezier(.16,1,.3,1);
+    }
+    .det-card:hover { background:var(--bg3); }
+    .det-card:hover::after { transform:scaleX(1); }
+    .det-icon {
+      width:34px; height:34px; border-radius:var(--r); margin-bottom:1.4rem;
+      background:rgba(6,131,32,.1); border:1px solid rgba(6,131,32,.2);
+      display:flex; align-items:center; justify-content:center;
+      font-size:.9rem; color:var(--green);
+    }
+    .det-lbl { font-size:.58rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:.4rem; }
+    .det-val { font-size:1.05rem; font-weight:500; color:var(--text); line-height:1.3; }
+    .det-sub { font-size:.78rem; color:var(--muted); margin-top:.28rem; font-style:italic; }
+
+    /* ─── GALLERY ─── */
+    #gallery { background:var(--bg); }
+    .gal-head {
+      display:flex; justify-content:space-between; align-items:flex-end;
+      margin-bottom:2.5rem; gap:2rem; flex-wrap:wrap;
+    }
+    .gal-h2 { font-size:clamp(1.9rem,4vw,3rem); font-weight:600; letter-spacing:-.02em; }
+    .gal-grid {
+      display:grid; grid-template-columns:repeat(4,1fr);
+      grid-template-rows:280px 280px; gap:4px;
+    }
+    .gal-item {
+      position:relative; overflow:hidden; border-radius:var(--r);
+      background:var(--bg2); cursor:pointer;
+    }
+    .gal-item img {
+      width:100%; height:100%; object-fit:cover; display:block;
+      transition:transform .65s cubic-bezier(.16,1,.3,1), filter .4s;
+      filter:brightness(.7) saturate(.8);
+    }
+    .gal-item:hover img { transform:scale(1.06); filter:brightness(.88) saturate(1.05); }
+    .gal-overlay {
+      position:absolute; inset:0;
+      background:linear-gradient(to top,rgba(8,8,8,.82) 0%,transparent 55%);
+      opacity:0; transition:opacity .38s;
+      display:flex; align-items:flex-end; padding:1.3rem;
+    }
+    .gal-item:hover .gal-overlay { opacity:1; }
+    .gal-cap { font-size:.65rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+
+    /* ─── SCREENINGS ─── */
+    #screenings {
+      background:var(--bg2);
+      border-top:1px solid var(--border);
+      border-bottom:1px solid var(--border);
+    }
+    .scr-head {
+      display:flex; justify-content:space-between; align-items:flex-end;
+      margin-bottom:3rem; gap:2rem; flex-wrap:wrap;
+    }
+    .scr-h2 { font-size:clamp(2rem,4vw,3.4rem); font-weight:600; letter-spacing:-.02em; }
+    .scr-list { display:flex; flex-direction:column; }
+    .scr-row {
+      display:grid; grid-template-columns:140px 1fr auto auto;
+      gap:2rem; align-items:center;
+      padding:1.6rem 0; border-bottom:1px solid var(--border);
+      position:relative; cursor:default;
+      transition:padding .22s;
+    }
+    .scr-row::before {
+      content:''; position:absolute; left:-2.5rem; right:-2.5rem; top:0; bottom:0;
+      background:rgba(255,255,255,.018); border-radius:var(--r);
+      opacity:0; transition:opacity .22s;
+    }
+    .scr-row:hover { padding-left:.5rem; }
+    .scr-row:hover::before { opacity:1; }
+    .scr-date { font-size:.72rem; letter-spacing:.1em; color:var(--muted); font-variant-numeric:tabular-nums; }
+    .scr-venue { font-size:.98rem; font-weight:500; color:var(--text); }
+    .scr-loc { font-size:.78rem; color:var(--muted); font-style:italic; margin-top:.18rem; }
+    .badge {
+      font-size:.6rem; letter-spacing:.14em; text-transform:uppercase;
+      padding:.32rem .72rem; border-radius:var(--r); width:fit-content;
+    }
+    .badge-open    { background:rgba(6,131,32,.12);   color:var(--green);  border:1px solid rgba(6,131,32,.3); }
+    .badge-limited { background:rgba(255,241,0,.08);  color:var(--yellow); border:1px solid rgba(255,241,0,.2); }
+    .badge-sold    { background:rgba(63,22,22,.3);    color:rgba(240,237,232,.35); border:1px solid rgba(63,22,22,.5); }
+    .scr-act { display:flex; justify-content:flex-end; }
+
+    /* ─── JOIN ─── */
+    #join {
+      background:var(--bg);
+      display:flex; flex-direction:column; align-items:center;
+      text-align:center; padding:8rem 2.5rem;
+    }
+    .join-eye {
+      font-size:.62rem; letter-spacing:.28em; text-transform:uppercase;
+      color:var(--green); margin-bottom:1.5rem;
+      display:flex; align-items:center; gap:.7rem;
+    }
+    .join-eye::before, .join-eye::after {
+      content:''; flex:1; max-width:52px; height:1px;
+      background:var(--green); opacity:.38;
+    }
+    .join-h2 {
+      font-size:clamp(2.5rem,6.5vw,5.5rem); font-weight:700;
+      line-height:.96; letter-spacing:-.032em;
+      margin-bottom:1.4rem; max-width:720px;
+    }
+    .join-h2 em { font-style:italic; color:var(--yellow); }
+    .join-sub {
+      font-size:1rem; color:var(--muted); max-width:460px;
+      margin:0 auto 3rem; line-height:1.72;
+    }
+    .join-form { display:flex; gap:.7rem; max-width:460px; width:100%; }
+    .join-inp {
+      font-family:var(--font); font-size:.85rem; flex:1;
+      background:var(--bg2); border:1px solid var(--border);
+      color:var(--text); padding:.82rem 1.2rem; border-radius:var(--r);
+      outline:none; transition:border-color .24s, box-shadow .24s;
+    }
+    .join-inp::placeholder { color:var(--muted); }
+    .join-inp:focus { border-color:rgba(6,131,32,.5); box-shadow:0 0 0 3px rgba(6,131,32,.1); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background:var(--bg); border-top:1px solid var(--border);
+      padding:2.8rem 2.5rem;
+      display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:2rem;
+    }
+    .foot-brand { font-size:.72rem; font-weight:600; letter-spacing:.2em; text-transform:uppercase; }
+    .foot-links { display:flex; gap:2rem; }
+    .foot-link {
+      font-size:.65rem; letter-spacing:.1em; text-transform:uppercase;
+      color:var(--muted); text-decoration:none; transition:color .2s;
+    }
+    .foot-link:hover { color:var(--text); }
+    .foot-copy { font-size:.65rem; color:var(--muted); text-align:right; font-style:italic; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width:1100px) {
+      .nav-mid { display:none; }
+    }
+    @media (max-width:960px) {
+      nav { padding:1rem 1.5rem; }
+      #hero { padding:0 1.5rem 3rem; }
+      .hero-rail { display:none; }
+      .section { padding:5rem 1.5rem; }
+      #synopsis { grid-template-columns:1fr; gap:2.5rem; }
+      .syn-stats { grid-template-columns:1fr 1fr; }
+      #details { padding:5rem 1.5rem; }
+      .det-head { flex-direction:column; align-items:flex-start; }
+      .card-grid { grid-template-columns:1fr 1fr; }
+      #gallery { padding:5rem 1.5rem; }
+      .gal-head { flex-direction:column; align-items:flex-start; }
+      .gal-grid { grid-template-columns:repeat(2,1fr); grid-template-rows:repeat(4,200px); }
+      #screenings { padding:5rem 1.5rem; }
+      .scr-head { flex-direction:column; align-items:flex-start; }
+      .scr-row { grid-template-columns:100px 1fr auto; }
+      .scr-act { display:none; }
+      #join { padding:5rem 1.5rem; }
+      footer { grid-template-columns:1fr; gap:1.4rem; padding:2rem 1.5rem; }
+      .foot-links { flex-wrap:wrap; gap:1.2rem; }
+      .foot-copy { text-align:left; }
+    }
+    @media (max-width:600px) {
+      .nav-time { display:none; }
+      .trust { gap:1.5rem; }
+      .syn-stats { grid-template-columns:1fr; }
+      .card-grid { grid-template-columns:1fr; }
+      .gal-grid { grid-template-columns:1fr; grid-template-rows:auto; }
+      .gal-item img { min-height:220px; }
+      .scr-row { grid-template-columns:1fr; gap:.6rem; }
+      .join-form { flex-direction:column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav id="nav">
+  <span class="nav-brand"></span>
+  <div class="nav-mid">
+    <span class="nav-avail"><span class="nav-dot"></span>World Premiere Available &nbsp;&#183;&nbsp; 2026 Festival Circuit</span>
+    <span class="nav-sub">A film by Khizer Khani</span>
+  </div>
+  <div class="nav-right">
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div class="orbs">
+    <div class="orb orb-g"></div>
+    <div class="orb orb-n"></div>
+    <div class="orb orb-m"></div>
+    <div class="orb orb-y"></div>
+  </div>
+  <div class="hero-vignette"></div>
+
+  <div class="hero-rail">
+    <div class="rail-item">
+      <span class="rail-lbl">Status</span>
+      <span class="rail-val live">&#9679; Festival Circuit</span>
+    </div>
+    <div class="rail-item">
+      <span class="rail-lbl">Genre</span>
+      <span class="rail-val">Sci-Fi / Drama / Thriller</span>
+    </div>
+    <div class="rail-item">
+      <span class="rail-lbl">Runtime</span>
+      <span class="rail-val">85 Minutes</span>
+    </div>
+    <div class="rail-item">
+      <span class="rail-lbl">Language</span>
+      <span class="rail-val">English</span>
+    </div>
+    <div class="rail-item">
+      <span class="rail-lbl">Country</span>
+      <span class="rail-val">Canada</span>
+    </div>
+  </div>
+
+  <div class="hero-body">
+    <h1 class="hero-h1">Midnight<br>Dreamers</h1>
+    <p class="hero-fname">The Khani Project</p>
+    <span class="trailer-pill">&#9654; Trailer Coming Soon</span>
+  </div>
+
+  <div class="hero-bottom">
+    <p class="hero-tagline">/ In a post-dystopian world, two brothers are chased by a relentless hunter — <strong>one last run<br>to save what remains.</strong></p>
+    <button class="hero-cta" onclick="document.getElementById('join').scrollIntoView({behavior:'smooth'})">
+      Join the Circle
+      <span class="hero-cta-arrow">&#8599;</span>
+    </button>
+  </div>
+
+  <div class="trust">
+    <span class="trust-lbl">Trusted By</span>
+    <div class="trust-logos">
+      <span class="trust-logo">Public Choice</span>
+      <span class="trust-logo">Spotify</span>
+      <span class="trust-logo">Samsung</span>
+      <span class="trust-logo">Filmsupply</span>
+      <span class="trust-logo">Slacks</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SYNOPSIS ─── -->
+<section id="synopsis" class="section">
+  <div>
+    <h2 class="syn-h2 r0">Two brothers.<br>One <em>last run.</em></h2>
+  </div>
+  <div>
+    <div class="syn-body r0 d2">
+      <p>In a near-future controlled by the Monty Corporation, citizens are stripped of their names and reduced to serial numbers. When a rare home visit reveals that laborer Zakariya Arshad's mother is dying and his younger brother carries immunity to the virus tearing through their world, Zak abandons his camp and runs.</p>
+      <p>What follows is a pursuit through swamps, forests, and the homes of the few willing to help them — with a broken bounty hunter closing in.</p>
+    </div>
+    <div class="syn-stats r0 d3">
+      <div><div class="st-lbl">Director</div><div class="st-val">Khizer Khani</div></div>
+      <div><div class="st-lbl">Year</div><div class="st-val">2026</div></div>
+      <div><div class="st-lbl">Genre</div><div class="st-val">Sci-Fi / Drama / Thriller</div></div>
+      <div><div class="st-lbl">Status</div><div class="st-val accent">Festival Circuit</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FILM DETAILS ─── -->
+<section id="details" class="section">
+  <div class="det-head">
+    <div>
+      <p class="sec-label r0">The Film</p>
+      <h2 class="det-h2 r0 d1">Built on constraint.<br>Driven by character.</h2>
+    </div>
+    <button class="btn btn-o r0 d2" onclick="document.getElementById('screenings').scrollIntoView({behavior:'smooth'})">Festival Info</button>
+  </div>
+  <div class="card-grid">
+    <div class="det-card r0">
+      <div class="det-icon">&#9670;</div>
+      <div class="det-lbl">Runtime</div>
+      <div class="det-val">85 Minutes</div>
+      <div class="det-sub">Aspect ratio 2.39:1 anamorphic widescreen — 24fps</div>
+    </div>
+    <div class="det-card r0 d1">
+      <div class="det-icon">&#9830;</div>
+      <div class="det-lbl">Sound</div>
+      <div class="det-val">5.1 Surround</div>
+      <div class="det-sub">Available in DCP and ProRes 422 HQ</div>
+    </div>
+    <div class="det-card r0 d2">
+      <div class="det-icon">&#9672;</div>
+      <div class="det-lbl">Production</div>
+      <div class="det-val">Canada — 2026</div>
+      <div class="det-sub">Shot on location in Ontario. No VFX — entirely in-camera</div>
+    </div>
+    <div class="det-card r0 d1">
+      <div class="det-icon">&#9674;</div>
+      <div class="det-lbl">Approach</div>
+      <div class="det-val">No Visual Effects</div>
+      <div class="det-sub">The audience fills in the universe through imagination</div>
+    </div>
+    <div class="det-card r0 d2">
+      <div class="det-icon">&#9671;</div>
+      <div class="det-lbl">Creative Team</div>
+      <div class="det-val">Khani, Murphy, Ravindran</div>
+      <div class="det-sub">Writer-director and both lead actors also serve as producers</div>
+    </div>
+    <div class="det-card r0 d3">
+      <div class="det-icon">&#9654;</div>
+      <div class="det-lbl">Premiere Status</div>
+      <div class="det-val">World Premiere Available</div>
+      <div class="det-sub">Currently on the 2026 festival circuit</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── GALLERY ─── -->
+<section id="gallery" class="section">
+  <div class="gal-head">
+    <div>
+      <p class="sec-label r0">Film Stills</p>
+      <h2 class="gal-h2 r0 d1">Production Stills</h2>
+    </div>
+    <button class="btn btn-o r0 d2">View All Stills</button>
+  </div>
+  <div class="gal-grid rs">
+    <div class="gal-item">
+      <img src="BTS/IMG_7835.jpg" alt="Behind the scenes" style="object-position:center 35%">
+      <div class="gal-overlay"><span class="gal-cap">On Set — Ontario</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="BTS/IMG_7853.jpg" alt="Behind the scenes" style="object-position:center 25%">
+      <div class="gal-overlay"><span class="gal-cap">Behind the Camera</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="BTS/IMG_7872.jpg" alt="Behind the scenes" style="object-position:center 28%">
+      <div class="gal-overlay"><span class="gal-cap">Directing</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="BTS/IMG_7884.jpg" alt="Behind the scenes" style="object-position:center 22%">
+      <div class="gal-overlay"><span class="gal-cap">On Set</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="BTS/IMG_7931.jpg" alt="Behind the scenes" style="object-position:65% center">
+      <div class="gal-overlay"><span class="gal-cap">Practical Effects</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="BTS/IMG_8552.jpg" alt="Behind the scenes" style="object-position:center 40%">
+      <div class="gal-overlay"><span class="gal-cap">Night Shoot</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="BTS/IMG_8604.jpg" alt="Behind the scenes" style="object-position:center 28%">
+      <div class="gal-overlay"><span class="gal-cap">On Set</span></div>
+    </div>
+    <div class="gal-item">
+      <img src="BTS/IMG_8607.jpg" alt="Behind the scenes" style="object-position:center 28%">
+      <div class="gal-overlay"><span class="gal-cap">Direction</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SCREENINGS ─── -->
+<section id="screenings" class="section">
+  <div class="scr-head">
+    <div>
+      <p class="sec-label r0">Festival Circuit</p>
+      <h2 class="scr-h2 r0 d1">Press &amp; Festival</h2>
+    </div>
+    <button class="btn btn-g r0 d2" onclick="document.getElementById('join').scrollIntoView({behavior:'smooth'})">Request Screener</button>
+  </div>
+  <div class="scr-list">
+    <div class="scr-row r0">
+      <div class="scr-date">2026</div>
+      <div><div class="scr-venue">World Premiere</div><div class="scr-loc">Status: Available — No prior festival screenings</div></div>
+      <span class="badge badge-open">Available</span>
+      <div class="scr-act"><button class="btn btn-o" onclick="document.getElementById('join').scrollIntoView({behavior:'smooth'})">Inquire</button></div>
+    </div>
+    <div class="scr-row r0 d1">
+      <div class="scr-date">Press</div>
+      <div><div class="scr-venue">Screener Access</div><div class="scr-loc">Password-protected — available for press, programmers &amp; acquisitions</div></div>
+      <span class="badge badge-open">On Request</span>
+      <div class="scr-act"><button class="btn btn-o" onclick="document.getElementById('join').scrollIntoView({behavior:'smooth'})">Request</button></div>
+    </div>
+    <div class="scr-row r0 d2">
+      <div class="scr-date">Interviews</div>
+      <div><div class="scr-venue">Khani, Ravindran &amp; Murphy</div><div class="scr-loc">Available in-person in Toronto or remote worldwide</div></div>
+      <span class="badge badge-open">Available</span>
+      <div class="scr-act"><button class="btn btn-o" onclick="document.getElementById('join').scrollIntoView({behavior:'smooth'})">Contact</button></div>
+    </div>
+    <div class="scr-row r0 d3">
+      <div class="scr-date">Format</div>
+      <div><div class="scr-venue">DCP &amp; ProRes 422 HQ</div><div class="scr-loc">Also available: H.264, Apple ProRes 4444 — closed captions &amp; SDH included</div></div>
+      <span class="badge badge-limited">On Request</span>
+      <div class="scr-act"><button class="btn btn-o" onclick="document.getElementById('join').scrollIntoView({behavior:'smooth'})">Details</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── JOIN ─── -->
+<section id="join">
+  <p class="join-eye r0">Press &amp; Festival Inquiries</p>
+  <h2 class="join-h2 r0 d1">Get in touch<br>with the <em>team.</em></h2>
+  <p class="join-sub r0 d2">For press, festival programming, and acquisition inquiries — reach Khizer Khani directly at <strong style="color:var(--text)">khizer@thekhaniproject.com</strong> or leave your email below.</p>
+  <form class="join-form r0 d3" onsubmit="handleJoin(event)">
+    <input type="email" class="join-inp" placeholder="your@email.com" required>
+    <button type="submit" class="btn btn-g">Join Now</button>
+  </form>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <span class="foot-brand">Midnight Dreamers</span>
+  <nav class="foot-links">
+    <a href="#synopsis"   class="foot-link">Synopsis</a>
+    <a href="#screenings" class="foot-link">Screenings</a>
+    <a href="#gallery"    class="foot-link">Stills</a>
+    <a href="#join"       class="foot-link">Contact</a>
+  </nav>
+  <span class="foot-copy">&copy; 2026 Midnight Dreamers &nbsp;&#183;&nbsp; A film by Khizer Khani</span>
+</footer>
+
+<script>
+
+  /* sticky nav */
+  const nav = document.getElementById('nav');
+  addEventListener('scroll', () => nav.classList.toggle('stuck', scrollY > 60), {passive:true});
+
+  /* scroll reveal via IntersectionObserver */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -36px 0px' });
+
+  document.querySelectorAll('.r0,.rl,.rs').forEach(el => io.observe(el));
+
+  /* join form — posts to Substack */
+  async function handleJoin(e) {
+    e.preventDefault();
+    const form = e.target;
+    const btn  = form.querySelector('button');
+    const inp  = form.querySelector('input');
+    const email = inp.value.trim();
+
+    btn.textContent = 'Submitting…';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('https://thekhaniproject.substack.com/api/v1/free', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, first_url: location.href, first_referrer: document.referrer })
+      });
+
+      if (res.ok) {
+        btn.textContent = 'Joined ✓';
+        btn.style.cssText = 'background:transparent;color:var(--green);border-color:var(--green)';
+        inp.value = '';
+        setTimeout(() => { btn.textContent = 'Join Now'; btn.style.cssText = ''; btn.disabled = false; }, 4000);
+      } else {
+        throw new Error();
+      }
+    } catch {
+      /* fallback: open Substack subscribe page with email pre-filled */
+      window.open('https://thekhaniproject.substack.com/subscribe?email=' + encodeURIComponent(email), '_blank');
+      btn.textContent = 'Join Now';
+      btn.style.cssText = '';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
